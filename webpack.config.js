@@ -1,8 +1,12 @@
 var path = require('path');
+var CopyWebpackPlugin = require('copy-webpack-plugin');
+
+const buildDir = path.resolve(__dirname, "build");
+
 module.exports = {
-  entry: './js/app.js',
+  entry: './src/app.js',
   output: {
-    path: __dirname,
+    path: buildDir,
     filename: 'bundle.js'
   },
   module: {
@@ -16,5 +20,17 @@ module.exports = {
         }
       }
     ]
-  }
+  },
+  devServer: {
+    outputPath: buildDir
+  },
+  plugins: [
+    // copy the index.html to the build directory
+    new CopyWebpackPlugin([
+      {
+        from: 'index.html',
+        to: path.resolve(buildDir, 'index.html')
+      }
+    ])
+  ]
 };
