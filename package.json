@@ -6,6 +6,9 @@
     "url": "https://github.com/aabmass/kinetics-visualizations.git",
     "type": "git"
   },
+  "scripts": {
+    "start": "python2 -m SimpleHTTPServer 8080"
+  },
   "author": "Aaron Abbott <aabmass@gmail.com>",
   "license": "MIT",
   "dependencies": {
