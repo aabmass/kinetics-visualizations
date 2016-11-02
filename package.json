@@ -1,0 +1,11 @@
+{
+  "name": "kinetics-visualizations",
+  "version": "0.0.1",
+  "main": "index.js",
+  "repository": {
+    "url": "https://github.com/aabmass/kinetics-visualizations.git",
+    "type": "git"
+  },
+  "author": "Aaron Abbott <aabmass@gmail.com>",
+  "license": "MIT"
+}
