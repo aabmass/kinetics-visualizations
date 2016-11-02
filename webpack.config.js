@@ -1,4 +1,5 @@
 var path = require('path');
+var webpack = require('webpack')
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const buildDir = path.resolve(__dirname, "build");
@@ -22,6 +23,9 @@ module.exports = {
     ]
   },
   devServer: {
+    inline: true,
+    open: true,
+    hot: true,
     outputPath: buildDir
   },
   plugins: [
@@ -31,6 +35,7 @@ module.exports = {
         from: 'index.html',
         to: path.resolve(buildDir, 'index.html')
       }
-    ])
+    ]),
+    new webpack.HotModuleReplacementPlugin() 
   ]
 };

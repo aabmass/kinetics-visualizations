@@ -7,7 +7,8 @@
     "type": "git"
   },
   "scripts": {
-    "start": "webpack-dev-server"
+    "start": "webpack-dev-server",
+    "build": "webpack"
   },
   "author": "Aaron Abbott <aabmass@gmail.com>",
   "license": "MIT",
