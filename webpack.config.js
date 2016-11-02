@@ -34,6 +34,10 @@ module.exports = {
       {
         from: 'index.html',
         to: path.resolve(buildDir, 'index.html')
+      },
+      {
+        from: 'src/models',
+        to: path.resolve(buildDir, 'models')
       }
     ]),
     new webpack.HotModuleReplacementPlugin() 
