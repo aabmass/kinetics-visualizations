@@ -8,7 +8,8 @@ import {
   DirectionalLight
 } from 'three';
 
-import Molecule from './molecule';
+import hydroxyl from './models/hydroxyl.pdb';
+import moleculeFactory from './molecule';
 
 var scene = new Scene();
 var camera = new PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 5000 );
@@ -30,9 +31,14 @@ var material = new MeshBasicMaterial( { color: 0x00ff00 } );
 var cube = new Mesh( geometry, material );
 scene.add( cube );
 
-let m = new Molecule('/models/hydroxyl.pdb');
+let createHydroxyl = moleculeFactory(hydroxyl);
 
-camera.position.z = 400;
+let h1 = createHydroxyl();
+let h2 = createHydroxyl();
+scene.add(h1);
+scene.add(h2);
+
+camera.position.z = 800;
 
 var render = function () {
   requestAnimationFrame( render );
@@ -40,7 +46,8 @@ var render = function () {
   cube.rotation.x += 0.01;
   cube.rotation.y += 0.02;
 
+  h2.rotation.z += 0.01;
+
   renderer.render(scene, camera);
 };
-
-m.loadMesh(scene, render);
+render();
