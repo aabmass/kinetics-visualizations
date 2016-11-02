@@ -5,14 +5,23 @@ import {
   BoxGeometry,
   MeshBasicMaterial,
   Mesh,
+  DirectionalLight
 } from 'three';
 
 import Molecule from './molecule';
 
 var scene = new Scene();
-var camera = new PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+var camera = new PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 5000 );
+
+var light = new DirectionalLight( 0xffffff, 0.8 );
+light.position.set( 1, 1, 1 );
+scene.add( light );
+var light = new DirectionalLight( 0xffffff, 0.5 );
+light.position.set( -1, -1, 1 );
+scene.add( light );
 
 var renderer = new WebGLRenderer();
+renderer.setClearColor( 0x050505 );
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
@@ -21,13 +30,10 @@ var material = new MeshBasicMaterial( { color: 0x00ff00 } );
 var cube = new Mesh( geometry, material );
 scene.add( cube );
 
-let m = new Molecule('/models/house.wrl');
-m.loadMesh(obj => {
-  console.log(obj);
-  scene.add(obj);
-});
+let m = new Molecule('/models/hydroxyl.pdb');
 
-camera.position.z = 5;
+camera.position.z = 400;
+
 var render = function () {
   requestAnimationFrame( render );
 
@@ -37,4 +43,4 @@ var render = function () {
   renderer.render(scene, camera);
 };
 
-render();
+m.loadMesh(scene, render);
