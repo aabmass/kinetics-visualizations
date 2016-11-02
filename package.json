@@ -7,5 +7,8 @@
     "type": "git"
   },
   "author": "Aaron Abbott <aabmass@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "three": "^0.82.1"
+  }
 }
