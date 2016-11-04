@@ -63,7 +63,7 @@
 /******/ 	}
 
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "704250618f8846e44775"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "c494ce1480b3d250ea18"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
 
@@ -642,7 +642,7 @@
 	}
 
 	var loader = new _three.JSONLoader();
-	loader.load('/models/hypertau.js', function (geometry, materials) {
+	loader.load('models/hypertau.js', function (geometry, materials) {
 	  var material = new _three.MultiMaterial(materials);
 	  var mesh = new _three.Mesh(geometry, material);
 
