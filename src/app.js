@@ -5,14 +5,27 @@ import {
   BoxGeometry,
   MeshBasicMaterial,
   Mesh,
-  DirectionalLight
+  DirectionalLight,
 } from 'three';
+
+import { TrackballControls } from './three-examples';
 
 import hydroxyl from './models/hydroxyl.pdb';
 import moleculeFactory from './molecule';
 
 var scene = new Scene();
 var camera = new PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 5000 );
+
+let controls = new TrackballControls( camera );
+controls.rotateSpeed = 1.0;
+controls.zoomSpeed = 1.2;
+controls.panSpeed = 0.8;
+controls.noZoom = false;
+controls.noPan = false;
+controls.staticMoving = true;
+controls.dynamicDampingFactor = 0.3;
+controls.keys = [ 65, 83, 68 ];
+controls.addEventListener( 'change', render );
 
 var light = new DirectionalLight( 0xffffff, 0.8 );
 light.position.set( 1, 1, 1 );
@@ -26,28 +39,37 @@ renderer.setClearColor( 0x050505 );
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
-var geometry = new BoxGeometry( 1, 1, 1 );
-var material = new MeshBasicMaterial( { color: 0x00ff00 } );
-var cube = new Mesh( geometry, material );
-scene.add( cube );
-
 let createHydroxyl = moleculeFactory(hydroxyl);
 
-let h1 = createHydroxyl();
-let h2 = createHydroxyl();
-scene.add(h1);
-scene.add(h2);
+let hydroxyls = [];
+const initNumHydroxyls = 150;
+for (let i = 0; i < initNumHydroxyls; ++i) {
+  let h = createHydroxyl();
+  h.position.x = Math.random() * 100;
+  h.position.y = Math.random() * 100;
+  // h.position.z = Math.random() * 100;
 
-camera.position.z = 800;
+  scene.add(h);
+  hydroxyls.push(h);
+}
 
-var render = function () {
-  requestAnimationFrame( render );
 
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.02;
+camera.position.z = 1500;
 
-  h2.rotation.z += 0.01;
+animate();
 
+function animate() {
+  hydroxyls.forEach((h, i) => {
+    h.position.x = (h.position.x + (Math.random() * 2 - 1) * 10) % 1000;
+    h.position.y = (h.position.y + (Math.random() * 2 - 1) * 10) % 1000;
+    // h.position.z = (h.position.z + (Math.random() * 2 - 1) * 10) % 1000;
+  });
+
+  requestAnimationFrame(animate);
+  controls.update();
   renderer.render(scene, camera);
-};
-render();
+}
+
+function render() {
+
+}
