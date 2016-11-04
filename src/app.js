@@ -87,7 +87,6 @@ function animate() {
 
   if (objects.tau) {
     objects.tau.rotation.x = Math.sin(delta / 10000.0);
-    console.log(objects.tau.position.x);
   }
 
   requestAnimationFrame(animate);
