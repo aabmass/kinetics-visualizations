@@ -1,6 +1,6 @@
 import {
   Scene,
-  PerspectiveCamera,
+ PerspectiveCamera,
   WebGLRenderer,
   BoxGeometry,
   MeshBasicMaterial,
@@ -41,40 +41,54 @@ renderer.setClearColor( 0x050505 );
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
+let objects = {
+  hydroxyls: [],
+  tau: null
+};
+
 let createHydroxyl = moleculeFactory(hydroxyl);
 
-let hydroxyls = [];
 const initNumHydroxyls = 150;
 for (let i = 0; i < initNumHydroxyls; ++i) {
   let h = createHydroxyl();
   h.position.x = Math.random() * 100;
   h.position.y = Math.random() * 100;
-  // h.position.z = Math.random() * 100;
+  h.position.z = Math.random() * 100;
 
   scene.add(h);
-  hydroxyls.push(h);
+  objects.hydroxyls.push(h);
 }
 
 let loader = new JSONLoader();
-loader.load('/models/fromblender.js', (geometry, materials) => {
+loader.load('/models/hypertau.js', (geometry, materials) => {
   var material = new MultiMaterial( materials );
   var mesh = new Mesh( geometry, material );
 
   mesh.scale.multiplyScalar(100.0);
+  mesh.position.addScalar(200);
   scene.add( mesh );
+  objects.tau = mesh;
 });
 
 
 camera.position.z = 1500;
 
+const start = Date.now();
+let delta = 0;
 animate();
-
 function animate() {
-  hydroxyls.forEach((h, i) => {
-    h.position.x = (h.position.x + (Math.random() * 2 - 1) * 10) % 1000;
-    h.position.y = (h.position.y + (Math.random() * 2 - 1) * 10) % 1000;
-    // h.position.z = (h.position.z + (Math.random() * 2 - 1) * 10) % 1000;
+  delta = Date.now() - start;
+
+  objects.hydroxyls.forEach((h, i) => {
+    h.position.x = (h.position.x + (Math.random() * 2 - 1) * 20) % 10000;
+    h.position.y = (h.position.y + (Math.random() * 2 - 1) * 20) % 10000;
+    h.position.z = (h.position.z + (Math.random() * 2 - 1) * 20) % 10000;
   });
+
+  if (objects.tau) {
+    objects.tau.rotation.x = Math.sin(delta / 10000.0);
+    console.log(objects.tau.position.x);
+  }
 
   requestAnimationFrame(animate);
   controls.update();
