@@ -1,0 +1,13 @@
+{
+  "libs": [
+    "browser",
+    "node_modules/**/*.js"
+
+  ],
+  "loadEagerly": [
+  ],
+  "plugins": {
+    "node": {},
+    "webpack": {}
+  }
+}
