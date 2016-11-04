@@ -63,7 +63,7 @@
 /******/ 	}
 
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "fa1696a490b6a386bb31"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "704250618f8846e44775"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
 
@@ -598,7 +598,7 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var scene = new _three.Scene();
-	var camera = new _three.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 5000);
+	var camera = new _three.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 15000);
 
 	var controls = new _threeExamples.TrackballControls(camera);
 	controls.rotateSpeed = 1.0;
@@ -623,9 +623,13 @@
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	document.body.appendChild(renderer.domElement);
 
+	var objects = {
+	  hydroxyls: [],
+	  tau: null
+	};
+
 	var createHydroxyl = (0, _molecule2.default)(_hydroxyl2.default);
 
-	var hydroxyls = [];
 	var initNumHydroxyls = 150;
 	for (var i = 0; i < initNumHydroxyls; ++i) {
 	  var h = createHydroxyl();
@@ -634,19 +638,37 @@
 	  h.position.z = Math.random() * 100;
 
 	  scene.add(h);
-	  hydroxyls.push(h);
+	  objects.hydroxyls.push(h);
 	}
+
+	var loader = new _three.JSONLoader();
+	loader.load('/models/hypertau.js', function (geometry, materials) {
+	  var material = new _three.MultiMaterial(materials);
+	  var mesh = new _three.Mesh(geometry, material);
+
+	  mesh.scale.multiplyScalar(100.0);
+	  mesh.position.addScalar(200);
+	  scene.add(mesh);
+	  objects.tau = mesh;
+	});
 
 	camera.position.z = 1500;
 
+	var start = Date.now();
+	var delta = 0;
 	animate();
-
 	function animate() {
-	  hydroxyls.forEach(function (h, i) {
-	    h.position.x = (h.position.x + (Math.random() * 2 - 1) * 2.0) % 1000;
-	    h.position.y = (h.position.y + (Math.random() * 2 - 1) * 2.0) % 1000;
-	    h.position.z = (h.position.z + (Math.random() * 2 - 1) * 2.0) % 1000;
+	  delta = Date.now() - start;
+
+	  objects.hydroxyls.forEach(function (h, i) {
+	    h.position.x = (h.position.x + (Math.random() * 2 - 1) * 20) % 10000;
+	    h.position.y = (h.position.y + (Math.random() * 2 - 1) * 20) % 10000;
+	    h.position.z = (h.position.z + (Math.random() * 2 - 1) * 20) % 10000;
 	  });
+
+	  if (objects.tau) {
+	    objects.tau.rotation.x = Math.sin(delta / 10000.0);
+	  }
 
 	  requestAnimationFrame(animate);
 	  controls.update();
