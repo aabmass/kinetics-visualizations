@@ -60,7 +60,7 @@ for (let i = 0; i < initNumHydroxyls; ++i) {
 }
 
 let loader = new JSONLoader();
-loader.load('/models/hypertau.js', (geometry, materials) => {
+loader.load('models/hypertau.js', (geometry, materials) => {
   var material = new MultiMaterial( materials );
   var mesh = new Mesh( geometry, material );
 
