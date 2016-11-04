@@ -6,6 +6,8 @@ import {
   MeshBasicMaterial,
   Mesh,
   DirectionalLight,
+  JSONLoader,
+  MultiMaterial
 } from 'three';
 
 import { TrackballControls } from './three-examples';
@@ -14,7 +16,7 @@ import hydroxyl from './models/hydroxyl.pdb';
 import moleculeFactory from './molecule';
 
 var scene = new Scene();
-var camera = new PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 5000 );
+var camera = new PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 15000 );
 
 let controls = new TrackballControls( camera );
 controls.rotateSpeed = 1.0;
@@ -52,6 +54,15 @@ for (let i = 0; i < initNumHydroxyls; ++i) {
   scene.add(h);
   hydroxyls.push(h);
 }
+
+let loader = new JSONLoader();
+loader.load('/models/fromblender.js', (geometry, materials) => {
+  var material = new MultiMaterial( materials );
+  var mesh = new Mesh( geometry, material );
+
+  mesh.scale.multiplyScalar(100.0);
+  scene.add( mesh );
+});
 
 
 camera.position.z = 1500;
