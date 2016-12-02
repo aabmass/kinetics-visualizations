@@ -190,8 +190,6 @@ function parsePDB(text) {
 export default function moleculeFactory(rawText) {
   let json = parsePDB(rawText);
   let { geometryAtoms, geometryBonds } = createModel(json);
-  console.log(json);
-
   let group = createGroup(geometryAtoms, geometryBonds, json);
 
   return group.clone.bind(group);

@@ -39,12 +39,11 @@ module.exports = {
         from: 'index.html',
         to: path.resolve(buildDir, 'index.html')
       }
-      /* include the models directly now ,
+      ,
       {
         from: 'src/models',
         to: path.resolve(buildDir, 'models')
       }
-      */
     ]),
     new webpack.HotModuleReplacementPlugin() 
   ]
