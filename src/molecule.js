@@ -26,7 +26,7 @@ export default class Molecule extends Group {
    */
   moveAndMutate() {
     // move the particle using x[t] = v * dt + x[t-1]
-    this.position.add(this.velocity.multiplyScalar(Molecule.deltaT));
+    this.position.addScaledVector(this.velocity, Molecule.deltaT);
 
     /*
      * Now mutate. Apply a force to the particle randomly, causing a change in
@@ -36,7 +36,7 @@ export default class Molecule extends Group {
      */
     let force = randVector3(Molecule.mutationRate);
 
-    // now is dv in equation above. Vector3 doesn't have immutable methods that
+    // Now is dv in equation above. Vector3 doesn't have immutable methods that
     // return copies.
     force.multiplyScalar(Molecule.deltaT / this.getMass());
 
@@ -57,6 +57,6 @@ export default class Molecule extends Group {
 /*
  * "static" properties of Molecule. If changed this affects all instances!
  */
-Molecule.mutationRate = 2;
+Molecule.mutationRate = 10;
 
-Molecule.deltaT = 1;
+Molecule.deltaT = 0.075
