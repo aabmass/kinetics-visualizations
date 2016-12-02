@@ -1,6 +1,6 @@
 import {
   Scene,
- PerspectiveCamera,
+  PerspectiveCamera,
   WebGLRenderer,
   BoxGeometry,
   MeshBasicMaterial,
@@ -13,7 +13,7 @@ import {
 import { TrackballControls } from './three-examples';
 
 import hydroxyl from './models/hydroxyl.pdb';
-import moleculeFactory from './molecule';
+import moleculeFactory from './molecule-factory';
 
 var scene = new Scene();
 var camera = new PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 15000 );
