@@ -1,8 +1,9 @@
 import * as THREE from 'three';
+import Molecule from './molecule';
 
 function createGroup(geometry, geometryBonds, json) {
   /* this code comes from the threejs examples. */
-  let root = new THREE.Group();
+  let root = new Molecule();
 
   var boxGeometry = new THREE.BoxGeometry( 1, 1, 1 );
   var sphereGeometry = new THREE.IcosahedronGeometry( 1, 2 );
