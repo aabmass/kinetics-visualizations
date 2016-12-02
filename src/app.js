@@ -12,6 +12,8 @@ import {
 
 import { TrackballControls } from './three-examples';
 
+import { randVector3 } from './math';
+
 import hydroxyl from './models/hydroxyl.pdb';
 import moleculeFactory from './molecule-factory';
 
@@ -41,22 +43,17 @@ renderer.setClearColor( 0x050505 );
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
-let objects = {
-  hydroxyls: [],
-  tau: null
-};
+let molecules = [];
 
-let createHydroxyl = moleculeFactory(hydroxyl);
+let createHydroxyl = moleculeFactory(hydroxyl, 17);
 
 const initNumHydroxyls = 150;
 for (let i = 0; i < initNumHydroxyls; ++i) {
   let h = createHydroxyl();
-  h.position.x = Math.random() * 100;
-  h.position.y = Math.random() * 100;
-  h.position.z = Math.random() * 100;
+  h.position.copy(randVector3(50));
 
   scene.add(h);
-  objects.hydroxyls.push(h);
+  molecules.push(h);
 }
 
 let loader = new JSONLoader();
@@ -67,7 +64,7 @@ loader.load('models/hypertau.js', (geometry, materials) => {
   mesh.scale.multiplyScalar(100.0);
   mesh.position.addScalar(200);
   scene.add( mesh );
-  objects.tau = mesh;
+  molecules.push(mesh);
 });
 
 
@@ -79,15 +76,11 @@ animate();
 function animate() {
   delta = Date.now() - start;
 
-  objects.hydroxyls.forEach((h, i) => {
-    h.position.x = (h.position.x + (Math.random() * 2 - 1) * 20) % 10000;
-    h.position.y = (h.position.y + (Math.random() * 2 - 1) * 20) % 10000;
-    h.position.z = (h.position.z + (Math.random() * 2 - 1) * 20) % 10000;
+  molecules.forEach((molecule, i) => {
+    if (molecule.moveAndMutate) {
+      molecule.moveAndMutate();
+    }
   });
-
-  if (objects.tau) {
-    objects.tau.rotation.x = Math.sin(delta / 10000.0);
-  }
 
   requestAnimationFrame(animate);
   controls.update();

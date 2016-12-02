@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 import Molecule from './molecule';
 
-function createGroup(geometry, geometryBonds, json) {
+function createMolecule(geometry, geometryBonds, json, mass) {
   /* this code comes from the threejs examples. */
-  let root = new Molecule();
+  let root = new Molecule(mass);
 
   var boxGeometry = new THREE.BoxGeometry( 1, 1, 1 );
   var sphereGeometry = new THREE.IcosahedronGeometry( 1, 2 );
@@ -188,11 +188,11 @@ function parsePDB(text) {
 
 }
 
-export default function moleculeFactory(rawText) {
+export default function moleculeFactory(rawText, mass) {
   let json = parsePDB(rawText);
   let { geometryAtoms, geometryBonds } = createModel(json);
-  let group = createGroup(geometryAtoms, geometryBonds, json);
+  let mol = createMolecule(geometryAtoms, geometryBonds, json, mass);
 
-  return group.clone.bind(group);
+  return mol.clone.bind(mol);
 }
 
