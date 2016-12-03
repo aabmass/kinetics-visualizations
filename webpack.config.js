@@ -44,16 +44,6 @@ module.exports = {
       {
         from: 'src/models',
         to: path.resolve(buildDir, 'models')
-      },
-
-      // copy these scripts into build for physijs
-      {
-        from: 'node_modules/ammo.js/ammo.js',
-        to: path.resolve(buildDir, 'ammo.js')
-      },
-      {
-        from: 'node_modules/physijs/physijs_worker.min.js',
-        to: path.resolve(buildDir, 'physijs_worker.min.js')
       }
     ]),
     new webpack.HotModuleReplacementPlugin() 

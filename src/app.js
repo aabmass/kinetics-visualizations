@@ -1,5 +1,4 @@
 import {
-  Scene,
   PerspectiveCamera,
   WebGLRenderer,
   BoxGeometry,
@@ -10,6 +9,8 @@ import {
   MultiMaterial
 } from 'three';
 
+import physijs from 'physijs';
+
 import { TrackballControls } from './three-examples';
 
 import { randVector3 } from './math';
@@ -17,7 +18,9 @@ import { randVector3 } from './math';
 import hydroxyl from './models/hydroxyl.pdb';
 import moleculeFactory from './molecule-factory';
 
-var scene = new Scene();
+console.log(physijs);
+
+var scene = new physijs.Scene();
 var camera = new PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 15000 );
 
 let controls = new TrackballControls( camera );
