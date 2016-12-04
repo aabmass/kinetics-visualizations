@@ -20,7 +20,7 @@ import { TrackballControls } from './three-examples';
 import { randVector3 } from './math';
 
 import hydroxyl from './models/hydroxyl.pdb';
-import createHydroxyl from './hydroxyl-factory';
+import { createHydroxyl } from './factories';
 
 var scene = new physijs.Scene();
 var camera = new PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 15000 );

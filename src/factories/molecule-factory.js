@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import physijs from 'physijs';
-import Molecule from './molecule';
 
 function createMolecule(geometry, geometryBonds, json, mass) {
   /* this code comes from the threejs examples. */
