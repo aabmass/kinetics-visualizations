@@ -2,11 +2,15 @@ import {
   PerspectiveCamera,
   WebGLRenderer,
   BoxGeometry,
+  CubeGeometry,
+  SphereGeometry,
   MeshBasicMaterial,
+  RepeatWrapping,
   Mesh,
   DirectionalLight,
   JSONLoader,
-  MultiMaterial
+  MultiMaterial,
+  Vector3
 } from 'three';
 
 import physijs from 'physijs';
@@ -16,12 +20,11 @@ import { TrackballControls } from './three-examples';
 import { randVector3 } from './math';
 
 import hydroxyl from './models/hydroxyl.pdb';
-import moleculeFactory from './molecule-factory';
-
-console.log(physijs);
+import createHydroxyl from './hydroxyl-factory';
 
 var scene = new physijs.Scene();
 var camera = new PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 15000 );
+camera.position.z = 200;
 
 let controls = new TrackballControls( camera );
 controls.rotateSpeed = 1.0;
@@ -46,44 +49,53 @@ renderer.setClearColor( 0x050505 );
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
+// first make the spherical border around the whole scene
+let borderMat = physijs.createMaterial(
+  new MeshBasicMaterial({ color: 0x46aeae, wireframe: true }),
+  0.9,
+  0.2
+);
+
+let borderGeom = new BoxGeometry(1000, 1000, 1000);
+let borderMesh = new physijs.BoxMesh(borderGeom, borderMat, 0);
+scene.add(borderMesh);
+
 let molecules = [];
 
-let createHydroxyl = moleculeFactory(hydroxyl, 17);
-
-const initNumHydroxyls = 150;
+const initNumHydroxyls = 200;
 for (let i = 0; i < initNumHydroxyls; ++i) {
   let h = createHydroxyl();
-  h.position.copy(randVector3(50));
+  h.position.copy(randVector3(200));
 
   scene.add(h);
   molecules.push(h);
 }
 
-let loader = new JSONLoader();
-loader.load('models/hypertau.js', (geometry, materials) => {
-  var material = new MultiMaterial( materials );
-  var mesh = new Mesh( geometry, material );
+// let loader = new JSONLoader();
+// loader.load('models/hypertau.js', (geometry, materials) => {
+//   var material = new MultiMaterial( materials );
+//   var mesh = new Mesh( geometry, material );
+// 
+//   mesh.scale.multiplyScalar(100.0);
+//   mesh.position.addScalar(200);
+//   scene.add( mesh );
+//   molecules.push(mesh);
+// });
 
-  mesh.scale.multiplyScalar(100.0);
-  mesh.position.addScalar(200);
-  scene.add( mesh );
-  molecules.push(mesh);
+scene.setGravity(new Vector3(0, 0, 0));
+scene.simulate();
+
+// this must be called after scene.simulate()'s first time
+molecules.forEach(mol => {
+  mol.setLinearVelocity(randVector3(20));
+  mol.setAngularVelocity(randVector3(20));
 });
 
-
-camera.position.z = 1500;
-
-const start = Date.now();
-let delta = 0;
 animate();
 function animate() {
-  delta = Date.now() - start;
+  // perform physics calculations
+  scene.simulate();
 
-  molecules.forEach((molecule, i) => {
-    if (molecule.moveAndMutate) {
-      molecule.moveAndMutate();
-    }
-  });
 
   requestAnimationFrame(animate);
   controls.update();

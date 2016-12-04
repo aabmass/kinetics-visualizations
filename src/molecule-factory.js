@@ -1,20 +1,23 @@
 import * as THREE from 'three';
+import physijs from 'physijs';
 import Molecule from './molecule';
 
 function createMolecule(geometry, geometryBonds, json, mass) {
   /* this code comes from the threejs examples. */
-  let root = new Molecule(mass);
-
   var boxGeometry = new THREE.BoxGeometry( 1, 1, 1 );
   var sphereGeometry = new THREE.IcosahedronGeometry( 1, 2 );
   var offset = geometry.center();
   geometryBonds.translate( offset.x, offset.y, offset.z );
+
+  let root = new physijs.ConvexMesh(boxGeometry, new THREE.MeshPhongMaterial( { color: 0xFFFFFF } ));
+  console.log(root);
+
   for ( var i = 0; i < geometry.vertices.length; i ++ ) {
     var position = geometry.vertices[ i ];
     var color = geometry.colors[ i ];
     var element = geometry.elements[ i ];
     var material = new THREE.MeshPhongMaterial( { color: color } );
-    var object = new THREE.Mesh( sphereGeometry, material );
+    var object = new physijs.SphereMesh( sphereGeometry, material );
     object.position.copy( position );
     object.position.multiplyScalar( 75 );
     object.scale.multiplyScalar( 25 );
@@ -30,7 +33,7 @@ function createMolecule(geometry, geometryBonds, json, mass) {
     var end = geometryBonds.vertices[ i + 1 ];
     start.multiplyScalar( 75 );
     end.multiplyScalar( 75 );
-    var object = new THREE.Mesh( boxGeometry, new THREE.MeshPhongMaterial( 0xffffff ) );
+    var object = new physijs.BoxMesh( boxGeometry, new THREE.MeshPhongMaterial( 0xffffff ) );
     object.position.copy( start );
     object.position.lerp( end, 0.5 );
     object.scale.set( 5, 5, start.distanceTo( end ) );
@@ -191,8 +194,7 @@ function parsePDB(text) {
 export default function moleculeFactory(rawText, mass) {
   let json = parsePDB(rawText);
   let { geometryAtoms, geometryBonds } = createModel(json);
-  let mol = createMolecule(geometryAtoms, geometryBonds, json, mass);
 
-  return mol.clone.bind(mol);
+  return () => createMolecule(geometryAtoms, geometryBonds, json, mass);
 }
 
