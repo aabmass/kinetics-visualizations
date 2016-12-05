@@ -7,6 +7,8 @@ import {
 
 import physijs from 'physijs';
 
+import { createBouncyMaterial } from '../utils';
+
 /* 
  * Creates a boundary object consisting of several thin (finite) planes.
  *
@@ -14,10 +16,14 @@ import physijs from 'physijs';
  * contain other meshes because it is made of individual walls
  */
 export default function createBoundary(wallLength = 5000) {
-  const wallMaterial = new MeshBasicMaterial({
-    color: 0x008080,
-    wireframe: true
-  });
+  const wallMaterial = createBouncyMaterial(
+    new MeshBasicMaterial({
+      color: 0x4135FF,
+      transparent: true,
+      wireframe: true,
+      opacity: 0.10
+    })
+  );
   const wallGeometry = new BoxGeometry(wallLength, wallLength, 2);
   
   let wallBottom = new physijs.BoxMesh(wallGeometry, wallMaterial, 0);

@@ -48,47 +48,67 @@ light.position.set( -1, -1, 1 );
 scene.add( light );
 
 var renderer = new WebGLRenderer();
-renderer.setClearColor( 0x050505 );
+renderer.setClearColor(0xE5E5E5);
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
 /** make the boundary */
-let boundary = createBoundary(500);
+let boundary = createBoundary(1000);
 scene.add(boundary);
 
 let molecules = [];
 
-const initNumHydroxyls = 200;
-for (let i = 0; i < initNumHydroxyls; ++i) {
-  let h = createHydroxyl();
-  h.position.copy(randVector3(200));
+/* this function is called after everything is added to the physics world */
+boundary.addEventListener('ready', () => {
+  // add the molecules only after the boundary is added
+  
+  const initNumHydroxyls = 200;
+  for (let i = 0; i < initNumHydroxyls; ++i) {
+    let h = createHydroxyl();
+    h.position.copy(randVector3(200));
 
-  scene.add(h);
-  molecules.push(h);
-}
+    scene.add(h);
+    molecules.push(h);
+  }
 
-// let loader = new JSONLoader();
-// loader.load('models/hypertau.js', (geometry, materials) => {
-//   var material = new MultiMaterial( materials );
-//   var mesh = new Mesh( geometry, material );
-// 
-//   mesh.scale.multiplyScalar(100.0);
-//   mesh.position.addScalar(200);
-//   scene.add( mesh );
-//   molecules.push(mesh);
-// });
+  // let loader = new JSONLoader();
+  // loader.load('models/hypertau.js', (geometry, materials) => {
+  //   var material = new MultiMaterial( materials );
+  //   var mesh = new Mesh( geometry, material );
+  // 
+  //   mesh.scale.multiplyScalar(100.0);
+  //   mesh.position.addScalar(200);
+  //   scene.add( mesh );
+  //   molecules.push(mesh);
+  // });
+});
 
 scene.setGravity(new Vector3(0, 0, 0));
 scene.simulate();
 
-// this must be called after scene.simulate()'s first time
-molecules.forEach(mol => {
-  mol.setLinearVelocity(randVector3(20));
-  mol.setAngularVelocity(randVector3(20));
-});
+scene.addEventListener('update', preSimulate);
 
 animate();
+
+function preSimulate() {
+  molecules.forEach(mol => {
+    // apply a random slight impulse to each molecule
+    mol.applyCentralImpulse(randVector3(100));
+
+    // the scene's physics have finished updating, scale the velocity of the
+    // molcules up to fix bug with collisions
+    if (mol.justCollided) {
+      // mol.setLinearVelocity(mol.getLinearVelocity().multiplyScalar(1.37));
+
+      mol.justCollided = false;
+    }
+  });
+
+}
+
 function animate() {
+  // preSimulate();
+
   // perform physics calculations
   scene.simulate();
 

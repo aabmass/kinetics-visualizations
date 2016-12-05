@@ -1,9 +1,13 @@
 import {
   SphereGeometry,
+  BoxGeometry,
   MeshPhongMaterial,
   CylinderGeometry,
+  Vector3,
 } from 'three';
+
 import physijs from 'physijs';
+import { createBouncyMaterial } from '../utils';
 
 /**
  * Some constant parameters for creating the molecules
@@ -15,13 +19,14 @@ const bondConnectorRadius = hydrogenRadius / 3;
 const bondLength = hydrogenRadius * 4;
 
 const hydrogenGeom = new SphereGeometry(hydrogenRadius, numSegments, numSegments);
-const hydrogenMat = new MeshPhongMaterial({ color: 0xFFFFFF });
+// const hydrogenGeom = new BoxGeometry(hydrogenRadius * 2, hydrogenRadius * 2, hydrogenRadius * 2);
+const hydrogenMat = createBouncyMaterial(new MeshPhongMaterial({ color: 0xFFFFFF }));
 
 const oxygenGeom = new SphereGeometry(oxygenRadius, numSegments, numSegments);
-const oxygenMat = new MeshPhongMaterial({ color: 0xF00000 });
-
+// const oxygenGeom = new BoxGeometry(oxygenRadius * 2, oxygenRadius * 2, oxygenRadius * 2);
+const oxygenMat = createBouncyMaterial(new MeshPhongMaterial({ color: 0xF00000 }));
 const bondGeom = new CylinderGeometry(bondConnectorRadius, bondConnectorRadius, bondLength);
-const bondMat = new MeshPhongMaterial({ color: 0xA3B1BE });
+const bondMat = createBouncyMaterial(new MeshPhongMaterial({ color: 0xA3B1BE }));
 
 export default function createHydroxyl() {
   let hydrogenMesh = new physijs.SphereMesh(hydrogenGeom, hydrogenMat, 1);
@@ -35,5 +40,19 @@ export default function createHydroxyl() {
   bondMesh.add(hydrogenMesh);
   bondMesh.add(oxygenMesh);
 
+  // need to use ccd because of high velocity and bug in physics engine
+  bondMesh.setCcdMotionThreshold(1);
+
+  // set the radius of the embedded sphere such that it is smaller than the object
+  bondMesh.setCcdSweptSphereRadius(0.2);
+
+  addCallbacks(bondMesh);
+
   return bondMesh;
+}
+
+function addCallbacks(hydroxylMesh) {
+  hydroxylMesh.addEventListener('collision', (other, linearVelocity, angularVelocity, contactNormal) => {
+    hydroxylMesh.justCollided = true;
+  });
 }
