@@ -1,22 +1,43 @@
 import {
-  Scene,
- PerspectiveCamera,
+  PerspectiveCamera,
   WebGLRenderer,
   BoxGeometry,
+  CubeGeometry,
+  SphereGeometry,
   MeshBasicMaterial,
+  RepeatWrapping,
   Mesh,
   DirectionalLight,
   JSONLoader,
-  MultiMaterial
+  MultiMaterial,
+  Vector3
 } from 'three';
+
+import Stats from 'stats.js';
+
+import physijs from 'physijs';
 
 import { TrackballControls } from './three-examples';
 
-import hydroxyl from './models/hydroxyl.pdb';
-import moleculeFactory from './molecule';
+import { randVector3 } from './math';
 
-var scene = new Scene();
+import hydroxyl from './models/hydroxyl.pdb';
+import {
+  createHydroxyl,
+  createBoundary
+} from './factories';
+
+/* setup the stats */
+let stats = new Stats();
+stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+document.body.appendChild( stats.dom );
+
+var scene = new physijs.Scene();
 var camera = new PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 15000 );
+camera.position.x = 750;
+camera.position.y = 250;
+camera.position.z = 1000;
+camera.lookAt(new Vector3(0, 0, 0));
 
 let controls = new TrackballControls( camera );
 controls.rotateSpeed = 1.0;
@@ -37,61 +58,80 @@ light.position.set( -1, -1, 1 );
 scene.add( light );
 
 var renderer = new WebGLRenderer();
-renderer.setClearColor( 0x050505 );
+renderer.setClearColor(0xE5E5E5);
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
-let objects = {
-  hydroxyls: [],
-  tau: null
-};
+/** make the boundary */
+let boundary = createBoundary(1000);
+scene.add(boundary);
 
-let createHydroxyl = moleculeFactory(hydroxyl);
+let molecules = [];
 
-const initNumHydroxyls = 150;
-for (let i = 0; i < initNumHydroxyls; ++i) {
-  let h = createHydroxyl();
-  h.position.x = Math.random() * 100;
-  h.position.y = Math.random() * 100;
-  h.position.z = Math.random() * 100;
+/* this function is called after everything is added to the physics world */
+boundary.addEventListener('ready', () => {
+  // add the molecules only after the boundary is added
+  
+  const initNumHydroxyls = 200;
+  for (let i = 0; i < initNumHydroxyls; ++i) {
+    let h = createHydroxyl();
+    h.position.copy(randVector3(200));
 
-  scene.add(h);
-  objects.hydroxyls.push(h);
-}
-
-let loader = new JSONLoader();
-loader.load('models/hypertau.js', (geometry, materials) => {
-  var material = new MultiMaterial( materials );
-  var mesh = new Mesh( geometry, material );
-
-  mesh.scale.multiplyScalar(100.0);
-  mesh.position.addScalar(200);
-  scene.add( mesh );
-  objects.tau = mesh;
-});
-
-
-camera.position.z = 1500;
-
-const start = Date.now();
-let delta = 0;
-animate();
-function animate() {
-  delta = Date.now() - start;
-
-  objects.hydroxyls.forEach((h, i) => {
-    h.position.x = (h.position.x + (Math.random() * 2 - 1) * 20) % 10000;
-    h.position.y = (h.position.y + (Math.random() * 2 - 1) * 20) % 10000;
-    h.position.z = (h.position.z + (Math.random() * 2 - 1) * 20) % 10000;
-  });
-
-  if (objects.tau) {
-    objects.tau.rotation.x = Math.sin(delta / 10000.0);
+    scene.add(h);
+    molecules.push(h);
   }
 
-  requestAnimationFrame(animate);
+  // let loader = new JSONLoader();
+  // loader.load('models/hypertau.js', (geometry, materials) => {
+  //   var material = new MultiMaterial( materials );
+  //   var mesh = new Mesh( geometry, material );
+  // 
+  //   mesh.scale.multiplyScalar(100.0);
+  //   mesh.position.addScalar(200);
+  //   scene.add( mesh );
+  //   molecules.push(mesh);
+  // });
+});
+
+scene.setGravity(new Vector3(0, 0, 0));
+scene.simulate();
+animate();
+
+function preSimulate() {
+  molecules.forEach(mol => {
+    // apply a random slight impulse to each molecule
+    mol.applyCentralImpulse(randVector3(100));
+
+    // the scene's physics have finished updating, scale the velocity of the
+    // molcules up to fix bug with collisions
+    if (mol.justCollided) {
+      // mol.setLinearVelocity(mol.getLinearVelocity().multiplyScalar(1.37));
+
+      mol.justCollided = false;
+    }
+  });
+}
+
+function animate() {
+  stats.begin();
+
+  /*** begin stats monitored code ***/
+
+  // any tampering with the physics before the engine recalculates can be done
+  // in this function's body
+  preSimulate();
+
+  // perform physics calculations
+  scene.simulate();
+
   controls.update();
   renderer.render(scene, camera);
+
+  /*** end stats monitored code ***/
+
+  stats.end();
+
+  requestAnimationFrame(animate);
 }
 
 function render() {
