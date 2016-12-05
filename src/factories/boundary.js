@@ -15,7 +15,7 @@ import { createBouncyMaterial } from '../utils';
  * Can't just use a plain box mesh because then it isn't "hollow". This can
  * contain other meshes because it is made of individual walls
  */
-export default function createBoundary(wallLength = 5000) {
+export default function createBoundary(wallLength = 5000, wallMass = 0) {
   const wallMaterial = createBouncyMaterial(
     new MeshBasicMaterial({
       color: 0x4135FF,
@@ -26,12 +26,12 @@ export default function createBoundary(wallLength = 5000) {
   );
   const wallGeometry = new BoxGeometry(wallLength, wallLength, 2);
   
-  let wallBottom = new physijs.BoxMesh(wallGeometry, wallMaterial, 0);
-  let wallTop = new physijs.BoxMesh(wallGeometry, wallMaterial, 0);
-  let wallLeft = new physijs.BoxMesh(wallGeometry, wallMaterial, 0);
-  let wallRight = new physijs.BoxMesh(wallGeometry, wallMaterial, 0);
-  let wallFront = new physijs.BoxMesh(wallGeometry, wallMaterial, 0);
-  let wallBack = new physijs.BoxMesh(wallGeometry, wallMaterial, 0);
+  let wallBottom = new physijs.BoxMesh(wallGeometry, wallMaterial, wallMass);
+  let wallTop = new physijs.BoxMesh(wallGeometry, wallMaterial, wallMass);
+  let wallLeft = new physijs.BoxMesh(wallGeometry, wallMaterial, wallMass);
+  let wallRight = new physijs.BoxMesh(wallGeometry, wallMaterial, wallMass);
+  let wallFront = new physijs.BoxMesh(wallGeometry, wallMaterial, wallMass);
+  let wallBack = new physijs.BoxMesh(wallGeometry, wallMaterial, wallMass);
 
   // Half Length => hl
   const hl = wallLength / 2;
