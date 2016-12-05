@@ -20,7 +20,10 @@ import { TrackballControls } from './three-examples';
 import { randVector3 } from './math';
 
 import hydroxyl from './models/hydroxyl.pdb';
-import { createHydroxyl } from './factories';
+import {
+  createHydroxyl,
+  createBoundary
+} from './factories';
 
 var scene = new physijs.Scene();
 var camera = new PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 15000 );
@@ -49,16 +52,9 @@ renderer.setClearColor( 0x050505 );
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
-// first make the spherical border around the whole scene
-let borderMat = physijs.createMaterial(
-  new MeshBasicMaterial({ color: 0x46aeae, wireframe: true }),
-  0.9,
-  0.2
-);
-
-let borderGeom = new BoxGeometry(1000, 1000, 1000);
-let borderMesh = new physijs.BoxMesh(borderGeom, borderMat, 0);
-scene.add(borderMesh);
+/** make the boundary */
+let boundary = createBoundary(500);
+scene.add(boundary);
 
 let molecules = [];
 
