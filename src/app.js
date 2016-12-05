@@ -64,7 +64,12 @@ renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
 /** make the boundary */
-let boundary = createBoundary(1000);
+const boundaryLength = 2000;
+
+// initial positions will be random within +- generateWithin
+const generateWithin = boundaryLength / 2 - boundaryLength / 5;
+
+let boundary = createBoundary(boundaryLength);
 scene.add(boundary);
 
 let molecules = [];
@@ -76,7 +81,7 @@ boundary.addEventListener('ready', () => {
   const initNumHydroxyls = 200;
   for (let i = 0; i < initNumHydroxyls; ++i) {
     let h = createHydroxyl();
-    h.position.copy(randVector3(400));
+    h.position.copy(randVector3(generateWithin));
 
     scene.add(h);
     molecules.push(h);
@@ -86,11 +91,14 @@ boundary.addEventListener('ready', () => {
   loader.load('models/hypertau.js', (geometry, materials) => {
     let material = createBouncyMaterial(new MultiMaterial( materials ));
 
-    const initNumTau = 10;
+    const initNumTau = 20;
     for (let i = 0; i < initNumTau; ++i) {
-      let tau = new physijs.BoxMesh(geometry, material, 1000);
-      tau.position.copy(randVector3(400));
-      tau.scale.multiplyScalar(3);
+      let tau = new physijs.CylinderMesh(geometry, material, 1000);
+      tau.position.copy(randVector3(generateWithin));
+      tau.rotateX(Math.random() * Math.PI);
+      tau.rotateY(Math.random() * Math.PI);
+      tau.rotateZ(Math.random() * Math.PI);
+      tau.scale.multiplyScalar(5);
       molecules.push(tau);
       scene.add(tau);
     }
