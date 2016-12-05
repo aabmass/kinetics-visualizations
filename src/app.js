@@ -86,6 +86,9 @@ boundary.addEventListener('ready', () => {
 scene.setGravity(new Vector3(0, 0, 0));
 scene.simulate();
 
+/* not sure if this is more, less, or same efficiency as calling it in
+ * the render loop. TODO: test it!
+ */
 scene.addEventListener('update', preSimulate);
 
 animate();
@@ -107,11 +110,8 @@ function preSimulate() {
 }
 
 function animate() {
-  // preSimulate();
-
   // perform physics calculations
   scene.simulate();
-
 
   requestAnimationFrame(animate);
   controls.update();
