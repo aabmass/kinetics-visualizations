@@ -63,7 +63,7 @@
 /******/ 	}
 /******/
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "a8c5b6e404b792e472cc"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "97980c32a127a1569b0b"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
 /******/
@@ -603,6 +603,8 @@
 	
 	var _factories = __webpack_require__(8);
 	
+	var _utils = __webpack_require__(10);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	/* setup the stats */
@@ -641,7 +643,12 @@
 	document.body.appendChild(renderer.domElement);
 	
 	/** make the boundary */
-	var boundary = (0, _factories.createBoundary)(1000);
+	var boundaryLength = 2000;
+	
+	// initial positions will be random within +- generateWithin
+	var generateWithin = boundaryLength / 2 - boundaryLength / 5;
+	
+	var boundary = (0, _factories.createBoundary)(boundaryLength);
 	scene.add(boundary);
 	
 	var molecules = [];
@@ -653,22 +660,30 @@
 	  var initNumHydroxyls = 200;
 	  for (var i = 0; i < initNumHydroxyls; ++i) {
 	    var h = (0, _factories.createHydroxyl)();
-	    h.position.copy((0, _math.randVector3)(200));
+	    h.position.copy((0, _math.randVector3)(generateWithin));
 	
 	    scene.add(h);
 	    molecules.push(h);
 	  }
 	
-	  // let loader = new JSONLoader();
-	  // loader.load('models/hypertau.js', (geometry, materials) => {
-	  //   var material = new MultiMaterial( materials );
-	  //   var mesh = new Mesh( geometry, material );
-	  // 
-	  //   mesh.scale.multiplyScalar(100.0);
-	  //   mesh.position.addScalar(200);
-	  //   scene.add( mesh );
-	  //   molecules.push(mesh);
-	  // });
+	  var loader = new _three.JSONLoader();
+	  loader.load('models/hypertau.js', function (geometry, materials) {
+	    var material = (0, _utils.createBouncyMaterial)(new _three.MultiMaterial(materials));
+	
+	    var initNumTau = 40;
+	    for (var _i = 0; _i < initNumTau; ++_i) {
+	      var tau = new _physijs2.default.CylinderMesh(geometry, material, 1000);
+	
+	      tau.position.copy((0, _math.randVector3)(generateWithin));
+	      tau.rotateX(Math.random() * Math.PI);
+	      tau.rotateY(Math.random() * Math.PI);
+	      tau.rotateZ(Math.random() * Math.PI);
+	      tau.scale.multiplyScalar(5);
+	
+	      molecules.push(tau);
+	      scene.add(tau);
+	    }
+	  });
 	});
 	
 	scene.setGravity(new _three.Vector3(0, 0, 0));
@@ -44021,6 +44036,7 @@
 	 */
 	function createBoundary() {
 	  var wallLength = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 5000;
+	  var wallMass = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 	
 	  var wallMaterial = (0, _utils.createBouncyMaterial)(new _three.MeshBasicMaterial({
 	    color: 0x4135FF,
@@ -44030,12 +44046,12 @@
 	  }));
 	  var wallGeometry = new _three.BoxGeometry(wallLength, wallLength, 2);
 	
-	  var wallBottom = new _physijs2.default.BoxMesh(wallGeometry, wallMaterial, 0);
-	  var wallTop = new _physijs2.default.BoxMesh(wallGeometry, wallMaterial, 0);
-	  var wallLeft = new _physijs2.default.BoxMesh(wallGeometry, wallMaterial, 0);
-	  var wallRight = new _physijs2.default.BoxMesh(wallGeometry, wallMaterial, 0);
-	  var wallFront = new _physijs2.default.BoxMesh(wallGeometry, wallMaterial, 0);
-	  var wallBack = new _physijs2.default.BoxMesh(wallGeometry, wallMaterial, 0);
+	  var wallBottom = new _physijs2.default.BoxMesh(wallGeometry, wallMaterial, wallMass);
+	  var wallTop = new _physijs2.default.BoxMesh(wallGeometry, wallMaterial, wallMass);
+	  var wallLeft = new _physijs2.default.BoxMesh(wallGeometry, wallMaterial, wallMass);
+	  var wallRight = new _physijs2.default.BoxMesh(wallGeometry, wallMaterial, wallMass);
+	  var wallFront = new _physijs2.default.BoxMesh(wallGeometry, wallMaterial, wallMass);
+	  var wallBack = new _physijs2.default.BoxMesh(wallGeometry, wallMaterial, wallMass);
 	
 	  // Half Length => hl
 	  var hl = wallLength / 2;
