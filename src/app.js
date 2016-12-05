@@ -13,6 +13,8 @@ import {
   Vector3
 } from 'three';
 
+import Stats from 'stats.js';
+
 import physijs from 'physijs';
 
 import { TrackballControls } from './three-examples';
@@ -24,6 +26,11 @@ import {
   createHydroxyl,
   createBoundary
 } from './factories';
+
+/* setup the stats */
+let stats = new Stats();
+stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+document.body.appendChild( stats.dom );
 
 var scene = new physijs.Scene();
 var camera = new PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 15000 );
@@ -110,12 +117,21 @@ function preSimulate() {
 }
 
 function animate() {
+  stats.begin();
+
+  /*** begin stats monitored code ***/
+
   // perform physics calculations
   scene.simulate();
 
-  requestAnimationFrame(animate);
   controls.update();
   renderer.render(scene, camera);
+
+  /*** end stats monitored code ***/
+
+  stats.end();
+
+  requestAnimationFrame(animate);
 }
 
 function render() {
