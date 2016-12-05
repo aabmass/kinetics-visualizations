@@ -34,7 +34,10 @@ document.body.appendChild( stats.dom );
 
 var scene = new physijs.Scene();
 var camera = new PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 15000 );
-camera.position.z = 200;
+camera.position.x = 750;
+camera.position.y = 250;
+camera.position.z = 1000;
+camera.lookAt(new Vector3(0, 0, 0));
 
 let controls = new TrackballControls( camera );
 controls.rotateSpeed = 1.0;

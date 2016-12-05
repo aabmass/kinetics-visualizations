@@ -13,6 +13,8 @@ import { createBouncyMaterial } from '../utils';
  * Some constant parameters for creating the molecules
  */
 const numSegments = 32;
+// eventually scale the whole model down by this factor
+const scaleDownBy = 0.25;
 const hydrogenRadius = 5;
 const oxygenRadius = hydrogenRadius * 2;
 const bondConnectorRadius = hydrogenRadius / 3;
@@ -40,11 +42,14 @@ export default function createHydroxyl() {
   bondMesh.add(hydrogenMesh);
   bondMesh.add(oxygenMesh);
 
+  // shrink the whole thing down
+  bondMesh.scale.multiplyScalar(scaleDownBy);
+
   // need to use ccd because of high velocity and bug in physics engine
   bondMesh.setCcdMotionThreshold(1);
 
   // set the radius of the embedded sphere such that it is smaller than the object
-  bondMesh.setCcdSweptSphereRadius(0.2);
+  bondMesh.setCcdSweptSphereRadius(scaleDownBy * 0.2 * bondLength);
 
   addCallbacks(bondMesh);
 
