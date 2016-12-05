@@ -91,14 +91,16 @@ boundary.addEventListener('ready', () => {
   loader.load('models/hypertau.js', (geometry, materials) => {
     let material = createBouncyMaterial(new MultiMaterial( materials ));
 
-    const initNumTau = 20;
+    const initNumTau = 40;
     for (let i = 0; i < initNumTau; ++i) {
       let tau = new physijs.CylinderMesh(geometry, material, 1000);
+
       tau.position.copy(randVector3(generateWithin));
       tau.rotateX(Math.random() * Math.PI);
       tau.rotateY(Math.random() * Math.PI);
       tau.rotateZ(Math.random() * Math.PI);
       tau.scale.multiplyScalar(5);
+
       molecules.push(tau);
       scene.add(tau);
     }
