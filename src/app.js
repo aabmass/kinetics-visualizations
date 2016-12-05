@@ -26,6 +26,7 @@ import {
   createHydroxyl,
   createBoundary
 } from './factories';
+import { createBouncyMaterial } from './utils';
 
 /* setup the stats */
 let stats = new Stats();
@@ -75,22 +76,25 @@ boundary.addEventListener('ready', () => {
   const initNumHydroxyls = 200;
   for (let i = 0; i < initNumHydroxyls; ++i) {
     let h = createHydroxyl();
-    h.position.copy(randVector3(200));
+    h.position.copy(randVector3(400));
 
     scene.add(h);
     molecules.push(h);
   }
 
-  // let loader = new JSONLoader();
-  // loader.load('models/hypertau.js', (geometry, materials) => {
-  //   var material = new MultiMaterial( materials );
-  //   var mesh = new Mesh( geometry, material );
-  // 
-  //   mesh.scale.multiplyScalar(100.0);
-  //   mesh.position.addScalar(200);
-  //   scene.add( mesh );
-  //   molecules.push(mesh);
-  // });
+  let loader = new JSONLoader();
+  loader.load('models/hypertau.js', (geometry, materials) => {
+    let material = createBouncyMaterial(new MultiMaterial( materials ));
+
+    const initNumTau = 10;
+    for (let i = 0; i < initNumTau; ++i) {
+      let tau = new physijs.BoxMesh(geometry, material, 1000);
+      tau.position.copy(randVector3(400));
+      tau.scale.multiplyScalar(3);
+      molecules.push(tau);
+      scene.add(tau);
+    }
+  });
 });
 
 scene.setGravity(new Vector3(0, 0, 0));
