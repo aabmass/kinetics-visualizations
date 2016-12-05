@@ -1760,9 +1760,9 @@ pbkdf2-compat@2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/pbkdf2-compat/-/pbkdf2-compat-2.0.1.tgz#b6e0c8fa99494d94e0511575802a59a5c142f288"
 
-"physijs@https://github.com/aabmass/Physijs/archive/0.0.2.tar.gz":
+"physijs@https://github.com/aabmass/Physijs/archive/0.0.3.tar.gz":
   version "0.1.0"
-  resolved "https://github.com/aabmass/Physijs/archive/0.0.2.tar.gz#01ccafab28baa1cd7beda97887c80d9ed53c3317"
+  resolved "https://github.com/aabmass/Physijs/archive/0.0.3.tar.gz#a33ab1d1fc699509701fe4361864b553688c2dad"
   dependencies:
     three "^0.82.1"
 

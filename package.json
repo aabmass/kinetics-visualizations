@@ -19,7 +19,7 @@
     "babel-preset-es2015": "^6.18.0",
     "copy-webpack-plugin": "^4.0.0",
     "imports-loader": "^0.6.5",
-    "physijs": "https://github.com/aabmass/Physijs/archive/0.0.2.tar.gz",
+    "physijs": "https://github.com/aabmass/Physijs/archive/0.0.3.tar.gz",
     "raw-loader": "^0.5.1",
     "three": "^0.82.1",
     "webpack": "^1.13.3",
