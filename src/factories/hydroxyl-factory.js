@@ -2,8 +2,6 @@ import {
   SphereGeometry,
   MeshPhongMaterial,
   CylinderGeometry,
-  Vector3,
-  Quaternion
 } from 'three';
 import physijs from 'physijs';
 
@@ -27,19 +25,8 @@ const bondMat = new MeshPhongMaterial({ color: 0xA3B1BE });
 
 export default function createHydroxyl() {
   let hydrogenMesh = new physijs.SphereMesh(hydrogenGeom, hydrogenMat, 1);
-  hydrogenMesh.castShadow = true;
-  hydrogenMesh.receiveShadow = true;
   let oxygenMesh = new physijs.SphereMesh(oxygenGeom, oxygenMat, 16);
-  oxygenMesh.castShadow = true;
-  oxygenMesh.receiveShadow = true;
   let bondMesh = new physijs.CylinderMesh(bondGeom, bondMat, 17); // not so sure about masses..
-  bondMesh.castShadow = true;
-  bondMesh.receiveShadow = true;
-
-  // rotate the bond mesh so it's in plain with the atoms
-  let quat = new Quaternion();
-  quat.setFromAxisAngle(new Vector3(0, 0, 1), Math.PI / 2);
-  // bondMesh.quaternion.copy(quat);
 
   // move the hydrogen and oxygen to bond cylinder's corners
   hydrogenMesh.position.y = -bondLength / 2; 
